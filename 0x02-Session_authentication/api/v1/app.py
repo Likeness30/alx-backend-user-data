@@ -15,20 +15,11 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 AUTH_TYPE = os.getenv("AUTH_TYPE")
 if AUTH_TYPE == "auth":
-    from api.v1.auth.auth import Auth
+    from api.v1.auth.auth import Auth  # type: ignore
     auth = Auth()
 elif AUTH_TYPE == "basic_auth":
-    from api.v1.auth.basic_auth import BasicAuth
+    from api.v1.auth.basic_auth import BasicAuth  # type: ignore
     auth = BasicAuth()
-elif AUTH_TYPE == "session_auth":
-    from api.v1.auth.session_auth import SessionAuth
-    auth = SessionAuth()
-elif AUTH_TYPE == "session_exp_auth":
-    from api.v1.auth.session_exp_auth import SessionExpAuth   # type: ignore
-    auth = SessionExpAuth()
-elif AUTH_TYPE == "session_db_auth":
-    from api.v1.auth.session_db_auth import SessionDBAuth   # type: ignore
-    auth = SessionDBAuth()
 
 
 @app.before_request
@@ -52,6 +43,7 @@ def bef_req():
                 abort(401, description="Unauthorized")
             if auth.current_user(request) is None:
                 abort(403, description="Forbidden")
+
 
 
 @app.errorhandler(404)
